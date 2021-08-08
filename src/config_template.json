@@ -1,0 +1,20 @@
+{
+    "cfl": {
+        "baseUri": "",
+        "apiKey": ""
+    },
+    "reddit": {
+        "clientId": "",
+        "clientSecret": "",
+        "userAgent": "",
+        "refreshToken": ""
+    },
+    "logging": {
+        "slack": {
+            "enabled": false,
+            "webhookUri": "",
+            "level": ""
+        }
+    },
+    "subreddit": ""
+}
