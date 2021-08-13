@@ -10,6 +10,7 @@ schedule = "*"
 mako = "*"
 python-dateutil = "*"
 slack-log-handler = "*"
+pytz = "*"
 
 [dev-packages]
 

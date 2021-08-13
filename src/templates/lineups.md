@@ -1,6 +1,3 @@
-**Starting lineups**
-
-${placeholder}
 [](/${away_abbr})${away_abbr} | [](/${home_abbr})${home_abbr}
 :---|:---
 % for r in rosters:

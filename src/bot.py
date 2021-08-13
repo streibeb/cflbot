@@ -1,9 +1,13 @@
-import logging
-import requests
-import praw
-from prawcore.exceptions import PrawcoreException
-from datetime import datetime
+from builtins import ValueError, list, len
 from time import sleep
+
+import logging
+import praw
+import pytz
+from datetime import datetime, timedelta
+from prawcore.exceptions import PrawcoreException
+
+from cfl_client import CFLClient
 from models.game import Game
 
 
@@ -12,30 +16,44 @@ class Bot(object):
         self.logger = logging.getLogger('cflbot')
 
         cfl_config = config.get('cfl')
-        if cfl_config is None:
+        self.__init_cfl_client(cfl_config)
+
+        reddit_config = config.get('reddit')
+        self.__init_praw(reddit_config)
+
+        self.PREGAME_THREAD = True
+        self.PREGAME_POST_MINUTES_AHEAD = 60
+        self.POST_MINUTES_AHEAD = 30
+        self.POSTGAME_THREAD = True
+        self.SUBREDDIT = config.get('subreddit')
+
+    def __init_cfl_client(self, config):
+        if config is None:
             raise ValueError('Missing CFL API config')
 
-        self.CFL_API_BASE_URI = cfl_config.get('baseUri')
+        self.CFL_API_BASE_URI = config.get('baseUri')
         if self.CFL_API_BASE_URI is None:
             raise ValueError('Missing CFL baseUri')
-        self.CFL_API_KEY = cfl_config.get('apiKey')
+        self.CFL_API_KEY = config.get('apiKey')
         if self.CFL_API_KEY is None:
             raise ValueError('Missing CFL apiKey')
 
-        reddit_config = config.get('reddit')
-        if reddit_config is None:
+        self.CFL_CLIENT = CFLClient(self.CFL_API_BASE_URI, self.CFL_API_KEY)
+
+    def __init_praw(self, config):
+        if config is None:
             raise ValueError('Missing Reddit API config')
 
-        self.REDDIT_CLIENT_ID = reddit_config.get('clientId')
+        self.REDDIT_CLIENT_ID = config.get('clientId')
         if self.REDDIT_CLIENT_ID is None:
             raise ValueError('Missing Reddit clientId')
-        self.REDDIT_CLIENT_SECRET = reddit_config.get('clientSecret')
+        self.REDDIT_CLIENT_SECRET = config.get('clientSecret')
         if self.REDDIT_CLIENT_SECRET is None:
             raise ValueError('Missing Reddit clientSecret')
-        self.REDDIT_USER_AGENT = reddit_config.get('userAgent')
+        self.REDDIT_USER_AGENT = config.get('userAgent')
         if self.REDDIT_USER_AGENT is None:
             raise ValueError('Missing Reddit userAgent')
-        self.REDDIT_REFRESH_TOKEN = reddit_config.get('refreshToken')
+        self.REDDIT_REFRESH_TOKEN = config.get('refreshToken')
         if self.REDDIT_REFRESH_TOKEN is None:
             raise ValueError('Missing Reddit refreshToken')
 
@@ -45,55 +63,49 @@ class Bot(object):
                              refresh_token=self.REDDIT_REFRESH_TOKEN)
         self.logger.info('Successfully authenticated with Reddit')
 
-        self.PREGAME_THREAD = None
-        self.SUBREDDIT = config.get('subreddit')
-
-    # End __init__()
-
     def run(self):
-
         while True:
-            games = self.__get_games_today()
-            self.logger.info('There are %d games today', len(games))
+            today = datetime.today().strftime('%Y-%m-%d')
+            game_ids = self.CFL_CLIENT.get_game_ids(today)
+            self.logger.info('There are %d games today', len(game_ids))
 
-            if len(games) > 0:
-                if self.PREGAME_THREAD:
-                    self.logger.debug("PREGAME THREAD")
+            while len(game_ids) > 0:
+                for game_id in list(game_ids):
+                    game = Game(self.CFL_CLIENT, game_id['season'], game_id['game_id'])
 
-                for game in games:
-                    g = Game(game)
-                    self.__post_thread(g)
+                    if game.event_status.is_in_progress():
+                        self.logger.info('Making game thread')
+                        self.__post_thread(game)
+                    elif game.event_status.is_pre_game():
+                        now = pytz.UTC.localize(datetime.utcnow())
+                        game_post_dt = game.date_start - timedelta(minutes=self.POST_MINUTES_AHEAD)
+                        pre_game_post_dt = game.date_start - timedelta(minutes=self.POST_MINUTES_AHEAD)
+                        if game_post_dt > now:
+                            self.logger.info("Making game thread")
+                            self.__post_thread(game)
+                        elif pre_game_post_dt > now:
+                            self.logger.info("Making pregame thread")
+                            self.__post_thread(game, prefix="PRE GAME THREAD")
+                    elif game.event_status.is_final():
+                        self.logger.info("Making postgame thread")
+                        self.__post_thread(game, prefix="POST GAME THREAD")
+                        game_ids.remove(game_id)
+                    elif game.event_status.is_cancelled():
+                        self.logger.info("Game was cancelled. Skipping post...")
+                        game_ids.remove(game_id)
 
-            self.logger.info("Sleeping for 1 minute")
-            sleep(1 * 60)
-            # End for
+                # End for
+
+                self.logger.info("Sleeping for 1 minute")
+                sleep(1 * 60)
+
+            # End while
+
+            self.logger.info("Sleeping for 1 day")
+            sleep(1 * 60 * 60 * 24)
         # End while
 
     # End run()
-
-    def __get_games_today(self):
-        today = datetime.today().strftime('%Y-%m-%d')
-        self.logger.debug('Getting games for %s', today)
-        r = requests.get('{base_uri}/v1/games?filter[date_start][eq]={today}&key={api_key}'.format(
-            base_uri=self.CFL_API_BASE_URI, today=today, api_key=self.CFL_API_KEY))
-        if r.status_code == 200:
-            data = r.json().get('data')
-            return data
-        else:
-            self.logger.error(r.json())
-        # End if
-
-    # End __get_games()
-
-    # def __test_get_games(self):
-    #     r = requests.get('http://api.cfl.ca/v1/games?filter[game_id][in]=2457,2466,2548,2550,2551&key=T8Mv9BRDdcB7bMQUsQvHqtCGPewH5y8p')
-    #     if r.status_code == 200:
-    #         data = r.json().get('data')
-    #         return data
-    #     else:
-    #         self.logger.error(r.json())
-    #     # End if
-    # # End __get_games()
 
     def __post_thread(self, game, prefix="GAME THREAD"):
         try:
@@ -113,6 +125,8 @@ class Bot(object):
                 submission = subreddit.submit(thread_title, selftext=datetime.now())
                 self.logger.debug('Thread submitted successfully')
 
-            submission.edit(datetime.now())
+            self.logger.debug('Updating thread "%s"...', thread_title)
+            submission.edit(game.build_post())
+            self.logger.debug('Done')
         except PrawcoreException as e:
-            print(e)
+            self.logger.error(e)

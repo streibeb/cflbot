@@ -1,8 +1,11 @@
+from builtins import Exception
+
+from io import open
+
 import json
 import logging
 from slack_log_handler import SlackLogHandler
 from bot import Bot
-
 
 def main():
     with open('config.json', 'r') as json_file:
