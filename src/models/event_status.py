@@ -14,6 +14,9 @@ class EventStatus(object):
         self.yards_to_go = data.get('yards_to_go')
     # End __init()
 
+    def __str__(self):
+        return '%s' % self.event_status_id
+
     def is_pre_game(self):
         return self.event_status_id == EventStatus.PRE_GAME
 

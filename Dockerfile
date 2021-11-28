@@ -1,5 +1,10 @@
-FROM kennethreitz/pipenv
+FROM python:3.7-alpine
+
+COPY requirements.txt /
+RUN pip install -r /requirements.txt
 
 COPY . /app
 
-CMD python3 /src/main.py
+WORKDIR /app
+
+CMD ["python", "src/main.py"]

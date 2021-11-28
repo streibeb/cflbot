@@ -1,6 +1,7 @@
 import logging
 from builtins import map, list, range, max, len, str, Exception
 
+import pytz
 from dateutil import parser
 from mako.template import Template
 
@@ -15,7 +16,7 @@ class Game(object):
 
         data = self.CFL_CLIENT.get_game(season, game_id, include=['rosters', 'play_by_play'])
         self.game_id = data.get('game_id')
-        self.date_start = parser.parse(data.get('date_start'))
+        self.date_start = parser.parse(data.get('date_start')).astimezone(pytz.UTC)
         self.game_number = data.get('game_number')
         self.week = data.get('week')
         self.season = data.get('season')

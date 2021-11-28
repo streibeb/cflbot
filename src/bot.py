@@ -21,10 +21,10 @@ class Bot(object):
         reddit_config = config.get('reddit')
         self.__init_praw(reddit_config)
 
-        self.PREGAME_THREAD = True
+        self.PREGAME_THREAD = False
         self.PREGAME_POST_MINUTES_AHEAD = 60
-        self.POST_MINUTES_AHEAD = 30
-        self.POSTGAME_THREAD = True
+        self.POST_MINUTES_AHEAD = 60
+        self.POSTGAME_THREAD = False
         self.SUBREDDIT = config.get('subreddit')
 
     def __init_cfl_client(self, config):
@@ -73,19 +73,27 @@ class Bot(object):
                 for game_id in list(game_ids):
                     game = Game(self.CFL_CLIENT, game_id['season'], game_id['game_id'])
 
+                    self.logger.info('Game %s has status %s', game.game_id, game.event_status)
+
                     if game.event_status.is_in_progress():
-                        self.logger.info('Making game thread')
+                        self.logger.info('Game in progress; Creating or updating game thread')
                         self.__post_thread(game)
                     elif game.event_status.is_pre_game():
                         now = pytz.UTC.localize(datetime.utcnow())
                         game_post_dt = game.date_start - timedelta(minutes=self.POST_MINUTES_AHEAD)
                         pre_game_post_dt = game.date_start - timedelta(minutes=self.POST_MINUTES_AHEAD)
-                        if game_post_dt > now:
+                        self.logger.debug('Time right now: %s', now)
+                        self.logger.debug('Game scheduled start time: %s', game.date_start)
+                        self.logger.debug('Pregame thread post time: %s', pre_game_post_dt)
+                        self.logger.debug('Game thread post time: %s', game_post_dt)
+                        if game_post_dt < now:
                             self.logger.info("Making game thread")
                             self.__post_thread(game)
-                        elif pre_game_post_dt > now:
+                        elif pre_game_post_dt < now:
                             self.logger.info("Making pregame thread")
                             self.__post_thread(game, prefix="PRE GAME THREAD")
+                        else:
+                            self.logger.info("Skipping game thread for now...")
                     elif game.event_status.is_final():
                         self.logger.info("Making postgame thread")
                         self.__post_thread(game, prefix="POST GAME THREAD")
