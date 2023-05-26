@@ -20,7 +20,7 @@ class Team(object):
         return {
             "BC": "/r/BC_Lions",
             "CGY": "/r/Stampeders",
-            "EDM": "/r/Eskimos",
+            "EDM": "/r/GoElks",
             "SSK": "/r/riderville",
             "WPG": "/r/WinnipegBlueBombers",
             "HAM": "/r/ticats",

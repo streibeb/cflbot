@@ -42,7 +42,7 @@ def setup_logging(config):
     if config_slack is not None and config_slack.get('enabled'):
         webhook_uri = config_slack.get('webhookUri')
         level = config_slack.get('level')
-        logger.debug('Slack logging is enabled with level %s', level)
+        logger.info('Slack logging is enabled with level %s', level)
 
         slack_handler = SlackLogHandler(webhook_uri)
         slack_handler.setFormatter(formatter)

@@ -104,12 +104,12 @@ class Bot(object):
 
                 # End for
 
-                self.logger.info("Sleeping for 1 minute")
+                self.logger.debug("Sleeping for 1 minute")
                 sleep(1 * 60)
 
             # End while
 
-            self.logger.info("Sleeping for 1 day")
+            self.logger.debug("Sleeping for 1 day")
             sleep(1 * 60 * 60 * 24)
         # End while
 
