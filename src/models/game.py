@@ -57,7 +57,7 @@ class Game(object):
     # End get_thread_title()
 
     def build_post(self):
-        template = Template(filename="src/templates/game_thread.md")
+        template = Template(filename="./templates/game_thread.md")
         context = {
             'header': self.__get_header(),
             'conditions': self.__get_conditions(),
@@ -70,7 +70,7 @@ class Game(object):
     # End build_post
 
     def __get_header(self):
-        template = Template(filename="src/templates/header.md")
+        template = Template(filename="./templates/header.md")
         context = {
             'matchup': self.__get_matchup(),
             'game_start': self.date_start.strftime("%I:%M %p %Z"),
@@ -101,7 +101,7 @@ class Game(object):
             )
 
     def __get_conditions(self):
-        template = Template(filename="src/templates/conditions.md")
+        template = Template(filename="./templates/conditions.md")
         context = {
             'placeholder': '',
             'weather_sky': '',
@@ -127,7 +127,7 @@ class Game(object):
         return template.render(**context)
 
     def __get_lineups(self):
-        template = Template(filename="src/templates/lineups.md")
+        template = Template(filename="./templates/lineups.md")
         context = {
             'away_abbr': self.team_1.abbreviation,
             'home_abbr': self.team_2.abbreviation,
@@ -159,7 +159,7 @@ class Game(object):
         overtime = len(self.team_1.linescores) > 4
         filename = "/linescore.md" if not overtime else "/linescore_ot.md"
 
-        template = Template(filename="src/templates/" + filename)
+        template = Template(filename="./templates/" + filename)
 
         def get_team_linescore(team):
             row = {
@@ -188,7 +188,7 @@ class Game(object):
         return template.render(**context)
 
     def __get_scoring_plays(self):
-        template = Template(filename="src/templates/scoring_plays.md")
+        template = Template(filename="./templates/scoring_plays.md")
         context = {
             'away_abbr': self.team_1.abbreviation,
             'home_abbr': self.team_2.abbreviation,
@@ -208,7 +208,7 @@ class Game(object):
         return template.render(**context)
 
     def __get_footer(self):
-        template = Template(filename="src/templates/footer.md")
+        template = Template(filename="./templates/footer.md")
         context = {
             'away_subreddit': self.team_1.subreddit,
             'home_subreddit': self.team_2.subreddit

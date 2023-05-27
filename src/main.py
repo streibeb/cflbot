@@ -8,7 +8,7 @@ from slack_log_handler import SlackLogHandler
 from bot import Bot
 
 def main():
-    with open('config.json', 'r') as json_file:
+    with open('./config/config.json', 'r') as json_file:
         config = json.load(json_file)
 
         logging_config = config.get('logging')
