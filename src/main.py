@@ -3,7 +3,7 @@ from bot import Bot
 from config import Config, LoggingConfig
 import logging
 
-VERSION = '3.1.0'
+VERSION = '3.1.1'
 
 def __init_logger(config: LoggingConfig):
     logger = logging.getLogger()
