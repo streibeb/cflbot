@@ -1,0 +1,21 @@
+{
+    "database": {
+        "databaseName": ""
+    },
+    "cfl": {
+        "baseUrl": "https://cflscoreboard.cfl.ca/json/scoreboard/",
+        "apiKey": ""
+    },
+    "reddit": {
+        "clientId": "",
+        "clientSecret": "",
+        "userAgent": "",
+        "refreshToken": "",
+        "subreddit": ""
+    },
+    "pregame": false,
+    "pregameMinutes": 360,
+    "gameMinutes": 60,
+    "postgame": false,
+    "tz": "America/Toronto"
+}
