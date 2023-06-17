@@ -52,7 +52,7 @@ class Reddit:
         submission = self.__get_submission(submission_id)
 
         if submission is None:
-            self.logger.error(f'Submission {submission_id} does not exist')
+            self.logger.error(f'Unable to update submission; Submission {submission_id} does not exist')
         else:
             self.logger.info(f'Submission {submission_id} exists, updating')
             submission.edit(body)
@@ -63,7 +63,7 @@ class Reddit:
             return
         
         if submission is None:
-            self.logger.error(f'Submission {submission.id} does not exist')
+            self.logger.error(f'Unable to set suggested sort; Submission {submission.id} does not exist')
         else:
             self.logger.info(f'Updating suggested sort for submission {submission.id}')
             submission.mod.suggested_sort(suggested_sort)
@@ -74,7 +74,7 @@ class Reddit:
         
         submission = self.__get_submission(submission_id)
         if submission is None:
-            self.logger.error(f'Submission {submission_id} does not exist')
+            self.logger.error(f'Unable to create comment; Submission {submission_id} does not exist')
         else:
             self.logger.info(f'Replying to submission {submission_id}')
             submission.reply(body)
