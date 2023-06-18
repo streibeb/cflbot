@@ -39,8 +39,6 @@ class Reddit:
 
         self.logger.info('Creating submission')
         submission = subreddit.submit(title, selftext=body)
-
-        self.__set_suggested_sort(subreddit, submission, 'new')
         
         return submission.id
         
@@ -57,16 +55,38 @@ class Reddit:
             self.logger.info(f'Submission {submission_id} exists, updating')
             submission.edit(body)
 
-    def __set_suggested_sort(self, subreddit: Subreddit, submission: Submission, suggested_sort: str) -> None:
+    def set_suggested_sort(self, submission_id: str, suggested_sort: str) -> None:
+        if not self.enabled:
+            return
+
+        subreddit = self.r.subreddit(self.subreddit_name)
         if not subreddit.user_is_moderator:
             self.logger.info('User is not moderator, skipping suggested sort')
             return
-        
+
+        submission = self.__get_submission(submission_id)
         if submission is None:
             self.logger.error(f'Unable to set suggested sort; Submission {submission.id} does not exist')
         else:
             self.logger.info(f'Updating suggested sort for submission {submission.id}')
             submission.mod.suggested_sort(suggested_sort)
+
+    def lock_submission(self, submission_id: str) -> None:
+        if not self.enabled:
+            return
+
+        subreddit = self.r.subreddit(self.subreddit_name)
+        if not subreddit.user_is_moderator:
+            self.logger.info('User is not moderator, skipping lock')
+            return
+
+        submission = self.__get_submission(submission_id)
+        if submission is None:
+            self.logger.error(f'Unable to lock; Submission {submission.id} does not exist')
+        else:
+            self.logger.info(f'Locking submission {submission.id}')
+            submission.mod.lock()
+    
 
     def create_comment(self, submission_id: str, body: str) -> None:
         if not self.enabled:

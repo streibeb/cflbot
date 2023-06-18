@@ -60,6 +60,8 @@ class Bot:
                 submission_id = self.reddit.create_submission(title, post_body)
                 thread.pregame_thread_id = submission_id
                 self.db.update_reddit_thread(thread)
+
+                self.reddit.set_suggested_sort(submission_id, 'new')
             else:
                 self.logger.info(f'Updating pregame thread')
                 self.reddit.update_submission(thread.pregame_thread_id, post_body)
@@ -83,6 +85,8 @@ class Bot:
                 submission_id = self.reddit.create_submission(title, post_body)
                 thread.game_thread_id = submission_id
                 self.db.update_reddit_thread(thread)
+
+                self.reddit.set_suggested_sort(submission_id, 'new')
             else:
                 self.logger.info(f'Updating game thread')
                 self.reddit.update_submission(thread.game_thread_id, post_body)
@@ -110,6 +114,7 @@ class Bot:
 
                 comment = f'[Post game thread here](https://www.reddit.com/r/CFL/comments/{thread.postgame_thread_id})'
                 self.reddit.create_comment(thread.game_thread_id, comment)
+                self.reddit.lock_submission(thread.game_thread_id)
             else:
                 if end_post_date < now:
                     self.logger.debug('Skipping postgame; postgame thread already exists')
