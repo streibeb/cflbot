@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
-from models import Team
+from . import Team
 
 class Game:
     def __init__(self):

@@ -1,8 +1,8 @@
 import requests
 from urllib.parse import urljoin, urlencode
-from models import Team, Week, Game, Standings
+from .models import Team, Week, Game, Standings
 from datetime import datetime, timedelta
-from config import CFLConfig
+from .config import CFLConfig
 
 class CFL:
     def __init__(self, config: CFLConfig):

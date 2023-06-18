@@ -1,4 +1,4 @@
-from config import RedditConfig
+from .config import RedditConfig
 import praw
 from praw.models import Subreddit, Submission
 import logging

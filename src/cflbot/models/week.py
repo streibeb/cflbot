@@ -1,5 +1,5 @@
 from datetime import date, datetime
-from models import Game
+from . import Game
 
 class Week:
     def __init__(self):

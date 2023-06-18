@@ -1,9 +1,6 @@
 import argparse
-from bot import Bot
-from config import Config, LoggingConfig
+from cflbot import Bot, Config, LoggingConfig, VERSION
 import logging
-
-VERSION = '3.2.0'
 
 def __init_logger(config: LoggingConfig):
     logger = logging.getLogger()

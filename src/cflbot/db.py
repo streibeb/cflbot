@@ -1,6 +1,6 @@
 import sqlite3
-from entities import RedditThread
-from config import DatabaseConfig
+from .entities import RedditThread
+from .config import DatabaseConfig
 
 class Database:
     def __init__(self, config: DatabaseConfig):

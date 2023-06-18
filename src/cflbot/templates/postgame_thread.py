@@ -1,7 +1,7 @@
-from cfl import CFL
+from cflbot.cfl import CFL
 from datetime import datetime, timezone, timedelta
-from models import Game, Standings
-from config import Config
+from cflbot.models import Game, Standings
+from cflbot.config import Config
 from mako.template import Template
 from zoneinfo import ZoneInfo
 import logging

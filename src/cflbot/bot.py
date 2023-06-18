@@ -1,13 +1,13 @@
 from time import sleep
 
-from config import Config, LoggingConfig
-from reddit import Reddit
-from cfl import CFL
-from templates import PreGameThread, GameThread, PostGameThread
-from db import Database
-from entities import RedditThread
+from .config import Config, LoggingConfig
+from .reddit import Reddit
+from .cfl import CFL
+from .templates import PreGameThread, GameThread, PostGameThread
+from .db import Database
+from .entities import RedditThread
 from datetime import datetime, timezone, timedelta
-from models import Game, Standings
+from .models import Game, Standings
 from mako.template import Template
 from zoneinfo import ZoneInfo
 import logging
