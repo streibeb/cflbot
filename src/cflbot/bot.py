@@ -40,10 +40,10 @@ class Bot:
 
     def __do_pregame_thread(self, game: Game) -> None:
         if not self.config.pregame:
-            self.logger.debug(f'Skipping pregame; not enabled')
+            self.logger.debug(f'Skipping pregame for game {game.cfl_game_id}; not enabled')
             return
         if not game.is_scheduled():
-            self.logger.debug(f'Skipping pregame; game in progress or complete')
+            self.logger.debug(f'Skipping pregame for game {game.cfl_game_id}; game in progress or complete')
             return
 
         post_date = game.start_date - timedelta(minutes=self.config.pregame_minutes)
@@ -54,8 +54,11 @@ class Bot:
             pre_game_thread = PreGameThread(self.cfl, self.config)
             post_body = pre_game_thread.build_body(game)
 
-            if thread.pregame_thread_id is None:
-                self.logger.info(f'Posting pregame thread')
+            if self.__is_game_archived(game):
+                self.logger.info(f'Skipping pregame for game {game.cfl_game_id}; game has been archived')
+                return
+            elif thread.pregame_thread_id is None:
+                self.logger.info(f'Posting pregame thread for game {game.cfl_game_id}')
                 title = pre_game_thread.build_title(game)
                 submission_id = self.reddit.create_submission(title, post_body)
                 thread.pregame_thread_id = submission_id
@@ -63,12 +66,12 @@ class Bot:
 
                 self.reddit.set_suggested_sort(submission_id, 'new')
             else:
-                self.logger.info(f'Updating pregame thread')
+                self.logger.info(f'Updating pregame thread for game {game.cfl_game_id}')
                 self.reddit.update_submission(thread.pregame_thread_id, post_body)
         
     def __do_game_thread(self, game: Game) -> None:
         if game.is_complete():
-            self.logger.debug(f'Skipping game; game is complete')
+            self.logger.debug(f'Skipping game for game {game.cfl_game_id}; game is complete')
             return
 
         post_date = game.start_date - timedelta(minutes=self.config.game_minutes)
@@ -79,8 +82,11 @@ class Bot:
             game_thread = GameThread(self.cfl, self.config)
             post_body = game_thread.build_body(game)
 
-            if thread.game_thread_id is None:
-                self.logger.info(f'Posting game thread')
+            if self.__is_game_archived(game):
+                self.logger.info(f'Skipping game for game {game.cfl_game_id}; game has been archived')
+                return
+            elif thread.game_thread_id is None:
+                self.logger.info(f'Posting game thread for game {game.cfl_game_id}')
                 title = game_thread.build_title(game)
                 submission_id = self.reddit.create_submission(title, post_body)
                 thread.game_thread_id = submission_id
@@ -88,25 +94,25 @@ class Bot:
 
                 self.reddit.set_suggested_sort(submission_id, 'new')
             else:
-                self.logger.info(f'Updating game thread')
+                self.logger.info(f'Updating game thread for game {game.cfl_game_id}')
                 self.reddit.update_submission(thread.game_thread_id, post_body)
 
     def __do_postgame_thread(self, game: Game) -> None:
         if not self.config.postgame:
-            self.logger.debug(f'Skipping postgame; not enabled')
+            self.logger.debug(f'Skipping postgame for game {game.cfl_game_id}; not enabled')
             return
 
         if game.is_complete():
             thread = self.__get_thread(game.cfl_game_id)
 
-            end_post_date = game.start_date + timedelta(hours=6)
-            now = datetime.now(timezone.utc)
-
             post_game_thread = PostGameThread(self.cfl, self.config)
             post_body = post_game_thread.build_body(game)
 
-            if thread.postgame_thread_id is None:
-                self.logger.info(f'Posting postgame')
+            if self.__is_game_archived(game):
+                self.logger.info(f'Skipping postgame for game {game.cfl_game_id}; game has been archived')
+                return
+            elif thread.postgame_thread_id is None:
+                self.logger.info(f'Posting postgame for game {game.cfl_game_id}')
                 title = post_game_thread.build_title(game)
                 submission_id = self.reddit.create_submission(title, post_body)
                 thread.postgame_thread_id = submission_id
@@ -116,10 +122,7 @@ class Bot:
                 self.reddit.create_comment(thread.game_thread_id, comment)
                 self.reddit.lock_submission(thread.game_thread_id)
             else:
-                if end_post_date < now:
-                    self.logger.debug('Skipping postgame; postgame thread already exists')
-                    return
-                self.logger.info('Updating postgame thread')
+                self.logger.info(f'Updating postgame thread for game {game.cfl_game_id}')
                 self.reddit.update_submission(thread.postgame_thread_id, post_body)
 
     def __get_thread(self, cfl_game_id: str) -> RedditThread:
@@ -127,3 +130,8 @@ class Bot:
         if thread is None:
             thread = self.db.create_reddit_thread(RedditThread(cfl_game_id))
         return thread
+
+    def __is_game_archived(self, game: Game) -> bool:
+        end_post_date = game.start_date + timedelta(hours=12)
+        now = datetime.now(timezone.utc)
+        return end_post_date < now

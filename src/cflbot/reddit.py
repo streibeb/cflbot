@@ -27,7 +27,8 @@ class Reddit:
                                 client_secret=config.reddit_client_secret,
                                 refresh_token=config.reddit_refresh_token)
             self.subreddit_name = config.subreddit
-            self.logger.info(f'Successfully authenticated with Reddit with scopes {self.r.auth.scopes()}')
+            self.logger.info(f'Successfully authenticated with Reddit')
+            self.logger.debug(f'Authenticated with scopes: {self.r.auth.scopes()}')
         else:
             self.logger.info('Reddit disabled')
     
