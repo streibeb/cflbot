@@ -4,7 +4,7 @@ A game thread bot for /r/CFL
 
 ## Prerequisites
 
-- See [setip.py](./setup.py) for instructions on getting a refresh token
+- See [setup.py](./setup.py) for instructions on getting a refresh token
 
 ## Setup
 You must define your configuration with the following format:
@@ -53,7 +53,7 @@ version: "3.9"
 services:
   bot:
     container_name: cflbot3
-    image: cflbot3
+    image: ghcr.io/streibeb/cflbot:latest
     volumes:
       - ./config:/config
       - ./data:/data
