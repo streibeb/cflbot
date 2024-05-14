@@ -26,16 +26,20 @@ class Bot:
         while True:
             now = datetime.now(timezone.utc)
             week = self.cfl.get_week(now)
-            self.logger.info(f'Checking for games in {week.name}')
-            for game in week.games:
-                self.logger.info(f'Processing game {game.cfl_game_id} with status {game.status}')
-                self.__do_pregame_thread(game)
-                self.__do_game_thread(game)
-                self.__do_postgame_thread(game)
-                self.logger.info(f'Finished processing game {game.cfl_game_id}')
-            
-            self.logger.info(f'Sleeping for one minute')
-            sleep(1 * 60)
+            if not week:
+                self.logger.info(f'No games found; Sleeping for an hour')
+                sleep(1 * 60 * 60)
+            else:
+                self.logger.info(f'Checking for games in {week.name}')
+                for game in week.games:
+                    self.logger.info(f'Processing game {game.cfl_game_id} with status {game.status}')
+                    self.__do_pregame_thread(game)
+                    self.__do_game_thread(game)
+                    self.__do_postgame_thread(game)
+                    self.logger.info(f'Finished processing game {game.cfl_game_id}')
+                
+                self.logger.info(f'Sleeping for one minute')
+                sleep(1 * 60)
     #End run
 
     def __do_pregame_thread(self, game: Game) -> None:

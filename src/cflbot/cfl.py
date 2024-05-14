@@ -31,7 +31,7 @@ class CFL:
         days_to_add = timedelta(days=1)
 
         weeks = self.get_weeks()
-        return list(filter(lambda w: (w.end_date + days_to_add) > date, weeks))[0]
+        return next(filter(lambda w: (w.end_date + days_to_add) > date, weeks), None)
 
     def get_standings(self) -> list[Standings]:
         url = urljoin(self._base_url, './squads.json')
