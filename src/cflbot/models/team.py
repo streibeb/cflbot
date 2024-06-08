@@ -35,7 +35,7 @@ class Team:
     @property
     def radio_station(self) -> str:
         return {
-            "BC": "[AM 730](https://globalnews.ca/news/8075485/listen-bc-lions-games-am730/)",
+            "BC": "[980 CKNW](https://globalnews.ca/radio/cknw/player/) or [Sher-E-Punjab Radio AM 600](https://listen.streamon.fm/ckspam)",
             "CGY": "[770 CHQR](https://globalnews.ca/radio/770chqr/)",
             "EDM": "[630 CHED](https://globalnews.ca/pages/edmonton-elks-audio-clips)",
             "SSK": "[620 CKRM](https://www.620ckrm.com/sportscage/)",
