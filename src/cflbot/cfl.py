@@ -28,7 +28,7 @@ class CFL:
             raise Exception(r.json())
 
     def get_week(self, date: datetime) -> Week:
-        days_to_add = timedelta(days=1)
+        days_to_add = timedelta(days=2)
 
         weeks = self.get_weeks()
         return next(filter(lambda w: (w.end_date + days_to_add) > date, weeks), None)
