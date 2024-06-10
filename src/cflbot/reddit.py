@@ -67,9 +67,9 @@ class Reddit:
 
         submission = self.__get_submission(submission_id)
         if submission is None:
-            self.logger.error(f'Unable to set suggested sort; Submission {submission.id} does not exist')
+            self.logger.error(f'Unable to set suggested sort; Submission {submission_id} does not exist')
         else:
-            self.logger.info(f'Updating suggested sort for submission {submission.id}')
+            self.logger.info(f'Updating suggested sort for submission {submission_id}')
             submission.mod.suggested_sort(suggested_sort)
 
     def lock_submission(self, submission_id: str) -> None:
@@ -83,9 +83,9 @@ class Reddit:
 
         submission = self.__get_submission(submission_id)
         if submission is None:
-            self.logger.error(f'Unable to lock; Submission {submission.id} does not exist')
+            self.logger.error(f'Unable to lock; Submission {submission_id} does not exist')
         else:
-            self.logger.info(f'Locking submission {submission.id}')
+            self.logger.info(f'Locking submission {submission_id}')
             submission.mod.lock()
     
 
