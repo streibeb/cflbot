@@ -18,4 +18,4 @@
 | [](/${home_team})${home_team} | ${home_radio} |
 | SiriusXM | [See the complete broadcast schedule](https://www.siriusxm.ca/live-sports/cfl/) |
 
-For more information see: https://www.cfl.ca/where-to-watch-2024-cfl-broadcast-information/
+For more information see: https://www.cfl.ca/2025-cfl-broadcast-schedule/
