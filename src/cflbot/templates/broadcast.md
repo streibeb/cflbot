@@ -12,10 +12,9 @@
 
 **Radio**
 
-| | |
+| Team | Station |
 | :--- | :--- |
 | [](/${away_team})${away_team} | ${away_radio} |
 | [](/${home_team})${home_team} | ${home_radio} |
-| SiriusXM | [See the complete broadcast schedule](https://www.siriusxm.ca/live-sports/cfl/) |
 
-For more information see: https://www.cfl.ca/2025-cfl-broadcast-schedule/
+For up to date information, see: https://www.cfl.ca/where-to-watch-2026-broadcast-information/

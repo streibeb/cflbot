@@ -80,6 +80,8 @@ class GameThread:
     def __get_footer(self, game) -> str:
         template = Template(filename=self.__get_file_path("footer.md"))
         context = {
+            'away_team': game.away_team.abbreviation,
+            'home_team': game.home_team.abbreviation,
             'away_subreddit': game.away_team.subreddit,
             'home_subreddit': game.home_team.subreddit
         }

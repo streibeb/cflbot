@@ -56,6 +56,7 @@ class Bot:
             thread = self.__get_thread(game.cfl_game_id)
 
             pre_game_thread = PreGameThread(self.cfl, self.config)
+            title = pre_game_thread.build_title(game)
             post_body = pre_game_thread.build_body(game)
 
             if self.__is_game_archived(game):
@@ -63,7 +64,7 @@ class Bot:
                 return
             elif thread.pregame_thread_id is None:
                 self.logger.info(f'Posting pregame thread for game {game.cfl_game_id}')
-                title = pre_game_thread.build_title(game)
+                self.logger.debug(f'title={title}\nbody={post_body}')
                 submission_id = self.reddit.create_submission(title, post_body)
                 thread.pregame_thread_id = submission_id
                 self.db.update_reddit_thread(thread)
@@ -84,6 +85,7 @@ class Bot:
             thread = self.__get_thread(game.cfl_game_id)
 
             game_thread = GameThread(self.cfl, self.config)
+            title = game_thread.build_title(game)
             post_body = game_thread.build_body(game)
 
             if self.__is_game_archived(game):
@@ -91,7 +93,7 @@ class Bot:
                 return
             elif thread.game_thread_id is None:
                 self.logger.info(f'Posting game thread for game {game.cfl_game_id}')
-                title = game_thread.build_title(game)
+                self.logger.debug(f'title={title}\nbody={post_body}')
                 submission_id = self.reddit.create_submission(title, post_body)
                 thread.game_thread_id = submission_id
                 self.db.update_reddit_thread(thread)
@@ -110,6 +112,7 @@ class Bot:
             thread = self.__get_thread(game.cfl_game_id)
 
             post_game_thread = PostGameThread(self.cfl, self.config)
+            title = post_game_thread.build_title(game)
             post_body = post_game_thread.build_body(game)
 
             if self.__is_game_archived(game):
@@ -117,7 +120,7 @@ class Bot:
                 return
             elif thread.postgame_thread_id is None:
                 self.logger.info(f'Posting postgame for game {game.cfl_game_id}')
-                title = post_game_thread.build_title(game)
+                self.logger.debug(f'title={title}\nbody={post_body}')
                 submission_id = self.reddit.create_submission(title, post_body)
                 thread.postgame_thread_id = submission_id
                 self.db.update_reddit_thread(thread)

@@ -2,9 +2,9 @@
 ---
 **Subscribe to these communities**
 
-| |
-| :--- |
-| ${away_subreddit} |
-| ${home_subreddit} |
+| Team | Subreddit |
+| :--- | :--- |
+| [](/${away_team})${away_team} | ${away_subreddit} |
+| [](/${home_team})${home_team} | ${home_subreddit} |
 
 **Remember to sort by new to keep up!**
