@@ -1,4 +1,4 @@
-FROM python:3.9-slim AS python-deps
+FROM python:3.14-slim AS python-deps
 
 # Setup env
 ENV LANG C.UTF-8
@@ -13,7 +13,7 @@ COPY Pipfile .
 COPY Pipfile.lock .
 RUN PIPENV_VENV_IN_PROJECT=true pipenv install --deploy
 
-FROM python:3.9-alpine AS runtime
+FROM python:3.14-alpine AS runtime
 
 COPY --from=python-deps /.venv /.venv
 ENV PATH="/.venv/bin:$PATH"
